@@ -205,12 +205,12 @@ body{font-family:'Figtree',system-ui,sans-serif;background:#f5f5f5;color:#111;mi
 
 <!-- Nav -->
 <div class="nav">
-  <button class="active" onclick="showTab('overview',this)">Overview</button>
-  <button onclick="showTab('ae',this)">AE Field Guide</button>
-  <button onclick="showTab('lyrics',this)">Lyrics &amp; Scripts</button>
-  <button onclick="showTab('manager',this)">Manager Guide</button>
-  <button onclick="showTab('cadence',this)">6-Week Cadence</button>
-  <button onclick="showTab('objections',this)">Objections</button>
+  <button class="active" data-tab="overview">Overview</button>
+  <button data-tab="ae">AE Field Guide</button>
+  <button data-tab="lyrics">Lyrics &amp; Scripts</button>
+  <button data-tab="manager">Manager Guide</button>
+  <button data-tab="cadence">6-Week Cadence</button>
+  <button data-tab="objections">Objections</button>
 </div>
 
 <div class="content">
@@ -303,11 +303,11 @@ body{font-family:'Figtree',system-ui,sans-serif;background:#f5f5f5;color:#111;mi
 <div id="tab-lyrics" class="section">
   <div class="section-head"><h2>Lyrics &amp; scripts</h2><p>Word-for-word talk tracks for every stage of the customer journey.</p></div>
   <div class="lyrics-subnav">
-    <button class="active" onclick="showLyrics('inbound',this)">Inbound Call</button>
-    <button onclick="showLyrics('outbound',this)">Outbound Call</button>
-    <button onclick="showLyrics('discovery',this)">Discovery Call</button>
-    <button onclick="showLyrics('aepre',this)">AE Pre-Sale</button>
-    <button onclick="showLyrics('aepost',this)">AE Post-Sale</button>
+    <button class="active" data-lyrics="inbound">Inbound Call</button>
+    <button data-lyrics="outbound">Outbound Call</button>
+    <button data-lyrics="discovery">Discovery Call</button>
+    <button data-lyrics="aepre">AE Pre-Sale</button>
+    <button data-lyrics="aepost">AE Post-Sale</button>
   </div>
 
   <!-- Inbound -->
@@ -431,8 +431,8 @@ body{font-family:'Figtree',system-ui,sans-serif;background:#f5f5f5;color:#111;mi
         <h3 class="session-title" id="sessionTitle"></h3>
       </div>
       <div class="role-toggle" id="roleToggle">
-        <button class="role-btn active" onclick="setRole('rep',this)">AE version</button>
-        <button class="role-btn" onclick="setRole('mgr',this)">Manager version</button>
+        <button class="role-btn active" data-role="rep">AE version</button>
+        <button class="role-btn" data-role="mgr">Manager version</button>
       </div>
     </div>
     <div id="sessionContent"></div>
@@ -472,20 +472,46 @@ body{font-family:'Figtree',system-ui,sans-serif;background:#f5f5f5;color:#111;mi
 </div><!-- /wrap -->
 
 <script>
-// ── Tab navigation ──
-window.showTab = function(id, btn) {
-  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
-  document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+window.onload = function() {
+
+  // Tab navigation
+  document.querySelectorAll('.nav button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-tab');
+      document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+      document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('active'); });
+      document.getElementById('tab-' + id).classList.add('active');
+      this.classList.add('active');
+    });
+  });
+
+  // Lyrics sub-nav
+  document.querySelectorAll('.lyrics-subnav button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-lyrics');
+      document.querySelectorAll('.lyrics-section').forEach(function(s){ s.classList.remove('active'); });
+      document.querySelectorAll('.lyrics-subnav button').forEach(function(b){ b.classList.remove('active'); });
+      document.getElementById('lyrics-' + id).classList.add('active');
+      this.classList.add('active');
+    });
+  });
+
+  // Role toggle
+  document.querySelectorAll('.role-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      currentRole = this.getAttribute('data-role');
+      document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      renderSession();
+    });
+  });
+
+  // Build week pills
+  buildPills();
+  selectWeek(0);
 };
-// ── Lyrics sub-nav ──
-window.showLyrics = function(id, btn) {
-  document.querySelectorAll('.lyrics-section').forEach(function(s){ s.classList.remove('active'); });
-  document.querySelectorAll('.lyrics-subnav button').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('lyrics-' + id).classList.add('active');
-  btn.classList.add('active');
-};
+
+</script>
 
 // ── 6-Week Cadence data ──
 var sessions = [
