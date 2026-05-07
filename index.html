@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Houzz Pro — Revenue Generation Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Figtree',system-ui,sans-serif;background:#f5f5f5;color:#111;min-height:100vh;}
+:root{
+  --green:#4CAF00;--greenLight:#edf7e6;--greenDark:#2d7a00;
+  --warn:#f5a623;--warnLight:#fff8ec;
+  --red:#fef2f2;--redText:#b91c1c;--redDark:#7f1d1d;
+  --gray:#f5f5f5;--grayBorder:rgba(0,0,0,0.12);
+  --textPrimary:#111;--textSecondary:#555;--textMuted:#888;
+}
+.wrap{max-width:820px;margin:0 auto;padding:0 0 4rem;}
+/* Header */
+.header{background:#1a1a1a;border-radius:0 0 16px 16px;padding:1.5rem;margin-bottom:1.5rem;}
+.header-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.logo-box{width:28px;height:20px;background:var(--green);border-radius:3px;}
+.header-eyebrow{color:rgba(255,255,255,0.5);font-size:12px;font-weight:500;letter-spacing:1px;}
+.header h1{color:#fff;font-size:22px;font-weight:600;margin:0 0 4px;}
+.header p{color:rgba(255,255,255,0.5);font-size:13px;}
+.header-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.tag{background:rgba(76,175,0,0.2);color:var(--green);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;}
+/* Nav */
+.nav{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap;padding:0 4px;}
+.nav button{font-size:13px;padding:6px 14px;border-radius:20px;cursor:pointer;border:0.5px solid var(--grayBorder);background:#fff;color:var(--textSecondary);font-family:'Figtree',sans-serif;font-weight:400;transition:all .15s;}
+.nav button.active{background:var(--green);color:#fff;border-color:var(--green);font-weight:500;}
+/* Content */
+.content{padding:0 4px;}
+.section{display:none;}.section.active{display:block;}
+/* Cards */
+.card{background:#fff;border:0.5px solid var(--grayBorder);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.section-head h2{font-size:20px;font-weight:500;margin:0 0 4px;}
+.section-head p{font-size:14px;color:var(--textSecondary);margin:0 0 1.5rem;}
+.label{font-size:12px;font-weight:500;color:var(--textSecondary);text-transform:uppercase;letter-spacing:.8px;margin:0 0 10px;}
+/* Metric grid */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.25rem;}
+.metric{background:var(--gray);border-radius:8px;padding:1rem;}
+.metric .mlabel{font-size:13px;color:var(--textSecondary);margin:0 0 4px;}
+.metric .mnum{font-size:22px;font-weight:600;margin:0;}
+.metric .msub{font-size:12px;color:var(--textSecondary);margin:4px 0 0;}
+/* From→To */
+.from-to{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;}
+.from-box{background:var(--red);border-radius:8px;padding:10px 14px;}
+.from-box .ft-label{font-size:13px;color:var(--redText);font-weight:500;margin:0 0 4px;}
+.from-box .ft-text{font-size:13px;color:var(--redDark);margin:0;line-height:1.5;}
+.to-box{background:var(--greenLight);border-radius:8px;padding:10px 14px;}
+.to-box .ft-label{font-size:13px;color:var(--greenDark);font-weight:500;margin:0 0 4px;}
+.to-box .ft-text{font-size:13px;color:var(--greenDark);margin:0;line-height:1.5;}
+.arrow{font-size:20px;color:var(--textSecondary);}
+/* Steps */
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
+.step-num{min-width:28px;height:28px;border-radius:50%;background:var(--greenLight);color:var(--greenDark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;}
+.step-title{font-weight:500;font-size:14px;margin:0 0 2px;}
+.step-q{font-size:13px;color:var(--textSecondary);font-style:italic;margin:0 0 2px;}
+.step-goal{font-size:12px;color:var(--greenDark);margin:0;}
+/* Qualifiers box */
+.qual-box{background:var(--greenLight);border-radius:10px;padding:12px 14px;border:1px solid var(--green);margin:14px 0;}
+.qual-box .qlabel{font-size:12px;font-weight:500;color:var(--greenDark);text-transform:uppercase;letter-spacing:.8px;margin:0 0 10px;}
+.qual-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;}
+.qual-num{min-width:20px;height:20px;border-radius:50%;background:var(--greenDark);color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.qual-q{font-size:13px;font-weight:500;color:var(--greenDark);margin:0 0 1px;}
+.qual-tip{font-size:12px;color:var(--textSecondary);margin:0;line-height:1.4;}
+/* Talk tracks */
+.talk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem;}
+.talk-card{background:#fff;border:0.5px solid var(--grayBorder);border-radius:0 12px 12px 0;padding:1rem 1.25rem;}
+.talk-label{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px;}
+.talk-text{font-size:14px;font-style:italic;margin:0 0 10px;line-height:1.6;}
+.talk-tips{margin:0;padding-left:16px;}
+.talk-tips li{font-size:13px;color:var(--textSecondary);margin-bottom:4px;}
+/* Value pitch */
+.pitch-block{border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:10px;}
+.pitch-block .plabel{font-size:13px;font-weight:500;margin:0 0 4px;}
+.pitch-block .ptext{font-size:13px;margin:0;line-height:1.5;}
+/* 5 whys */
+.why-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;}
+.why-label{font-size:11px;font-weight:500;min-width:80px;padding-top:2px;}
+.why-text{font-size:13px;}
+/* Roles */
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
+.role-card{border-radius:0 8px 8px 0;padding:8px 12px;}
+.role-title{font-size:13px;font-weight:500;margin:0 0 4px;}
+.role-desc{font-size:13px;color:var(--textSecondary);margin:0;line-height:1.5;}
+/* Discovery zones */
+.zone-stack{display:flex;flex-direction:column;gap:8px;}
+.zone-item{border-radius:8px;padding:10px 14px;}
+.zone-title{font-size:13px;font-weight:500;margin:0 0 2px;}
+.zone-desc{font-size:13px;color:var(--textSecondary);margin:0;}
+/* Objections */
+.obj-card{background:#fff;border:0.5px solid var(--grayBorder);border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
+.obj-title{font-size:13px;font-weight:500;margin:0 0 8px;}
+.obj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.obj-connect{background:var(--greenLight);border-radius:8px;padding:8px 10px;}
+.obj-cont{background:var(--warnLight);border-radius:8px;padding:8px 10px;}
+.obj-inner-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin:0 0 4px;}
+.obj-inner-text{font-size:13px;margin:0;line-height:1.5;}
+.threeC-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.threeC-item{border-radius:8px;padding:10px 12px;}
+.threeC-title{font-size:13px;font-weight:500;margin:0 0 6px;}
+.threeC-desc{font-size:13px;color:var(--textSecondary);margin:0;line-height:1.5;}
+/* Manager */
+.mgr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;}
+.mgr-box{border-radius:8px;padding:10px 14px;}
+.mgr-box ul{margin:0;padding-left:16px;}
+.mgr-box ul li{font-size:13px;margin-bottom:4px;line-height:1.5;}
+.sbi-box{border-radius:8px;padding:10px 14px;margin-bottom:10px;}
+.sbi-row{font-size:13px;color:var(--textSecondary);margin:0 0 4px;}
+.grow-card{background:#fff;border:0.5px solid var(--grayBorder);border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;}
+.grow-scenario{font-size:13px;font-weight:500;margin:0 0 12px;}
+.grow-row{display:flex;gap:8px;margin-bottom:8px;}
+.grow-label{min-width:110px;font-size:12px;font-weight:500;}
+.grow-text{font-size:13px;color:var(--textSecondary);line-height:1.5;}
+.symptom-row{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--grayBorder);}
+.symptom-label{font-size:12px;color:var(--redText);font-weight:500;min-width:220px;line-height:1.5;}
+.symptom-fix{font-size:13px;color:var(--textSecondary);line-height:1.5;}
+/* Cadence */
+.phase-legend{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.phase-box{border-radius:8px;padding:8px 12px;}
+.phase-title{font-size:12px;font-weight:500;margin:0 0 2px;}
+.phase-desc{font-size:12px;color:var(--textSecondary);margin:0;}
+.week-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.week-pill{font-size:11px;padding:5px 10px;border-radius:16px;cursor:pointer;font-weight:500;font-family:'Figtree',sans-serif;border:1px solid;transition:all .15s;}
+.session-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.session-meta{display:flex;gap:8px;align-items:center;margin-bottom:4px;}
+.session-phase-badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;}
+.session-week{font-size:12px;color:var(--textSecondary);}
+.session-title{font-size:16px;font-weight:500;margin:0;}
+.role-toggle{display:flex;gap:4px;}
+.role-btn{font-size:12px;padding:5px 12px;border-radius:16px;cursor:pointer;border:0.5px solid var(--grayBorder);background:#fff;color:var(--textSecondary);font-family:'Figtree',sans-serif;transition:all .15s;}
+.role-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.obj-banner{background:var(--greenLight);border-radius:8px;padding:8px 12px;margin-bottom:12px;}
+.obj-banner .ob-label{font-size:12px;font-weight:500;color:var(--greenDark);text-transform:uppercase;letter-spacing:.8px;margin:0 0 2px;}
+.obj-banner .ob-text{font-size:13px;color:var(--greenDark);margin:0;line-height:1.5;}
+.teach-list{margin:0 0 14px;padding-left:18px;}
+.teach-list li{font-size:13px;margin-bottom:6px;line-height:1.6;}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.practice-box{background:var(--gray);border-radius:8px;padding:10px 12px;}
+.practice-box .pb-label{font-size:12px;font-weight:500;color:var(--textSecondary);text-transform:uppercase;letter-spacing:.8px;margin:0 0 6px;}
+.practice-box .pb-text{font-size:13px;margin:0;line-height:1.5;}
+.practice-box .pb-drill{font-size:13px;color:var(--textSecondary);margin:6px 0 0;line-height:1.5;}
+.cta-box{background:var(--warnLight);border-radius:8px;padding:10px 12px;}
+.cta-box .cb-label{font-size:12px;font-weight:500;color:#a06800;text-transform:uppercase;letter-spacing:.8px;margin:0 0 6px;}
+.cta-box .cb-text{font-size:13px;margin:0;line-height:1.5;}
+.coaching-inner{margin-top:8px;padding-top:8px;border-top:0.5px solid var(--grayBorder);}
+.coaching-inner .ci-label{font-size:12px;font-weight:500;color:var(--greenDark);text-transform:uppercase;letter-spacing:.8px;margin:0 0 4px;}
+.coaching-inner .ci-text{font-size:13px;margin:0;line-height:1.5;}
+/* Weekly cadence strip */
+.cadence-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:1rem;}
+.day-box{border-radius:8px;padding:8px 10px;}
+.day-title{font-size:13px;font-weight:500;margin:0 0 6px;}
+.day-list{margin:0;padding-left:14px;}
+.day-list li{font-size:12px;color:var(--textSecondary);margin-bottom:4px;line-height:1.4;}
+/* Lyrics */
+.lyrics-subnav{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.lyrics-subnav button{font-size:12px;padding:5px 12px;border-radius:20px;cursor:pointer;background:#fff;color:var(--textSecondary);border:0.5px solid var(--grayBorder);font-family:'Figtree',sans-serif;transition:all .15s;}
+.lyrics-subnav button.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.lyrics-section{display:none;}.lyrics-section.active{display:block;}
+.lyrics-banner{background:var(--greenLight);border-radius:8px;padding:10px 14px;margin-bottom:14px;}
+.lyrics-banner .lb-title{font-size:13px;font-weight:500;color:var(--greenDark);margin:0 0 2px;}
+.lyrics-banner .lb-sub{font-size:12px;color:var(--greenDark);margin:0;}
+.script-block{display:flex;gap:12px;margin-bottom:14px;}
+.script-phase{min-width:110px;padding-top:2px;}
+.script-phase span{font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;display:inline-block;line-height:1.4;text-align:center;}
+.script-body{flex:1;background:var(--gray);border-radius:8px;padding:10px 14px;}
+.lyric-line{font-size:13px;font-style:italic;margin:0 0 6px;line-height:1.6;}
+.note-line{font-size:12px;color:var(--textSecondary);margin:4px 0 6px;line-height:1.5;}
+.mandatory-box{background:var(--red);border-radius:8px;padding:10px 12px;margin:8px 0;}
+.mandatory-box .mb-label{font-size:12px;font-weight:500;color:var(--redText);text-transform:uppercase;letter-spacing:.8px;margin:0 0 8px;}
+.mandatory-item{display:flex;gap:10px;margin-bottom:6px;}
+.mandatory-num{min-width:20px;height:20px;border-radius:50%;background:var(--redText);color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.mandatory-title{font-size:13px;font-weight:500;color:var(--redText);margin:0 0 1px;}
+.mandatory-why{font-size:12px;color:var(--textSecondary);margin:0;}
+.workflow-card{border-radius:0 6px 6px 0;padding:8px 10px;margin-bottom:8px;}
+.workflow-path{font-size:12px;font-weight:500;margin:0 0 2px;}
+.workflow-listen{font-size:12px;color:var(--textSecondary);margin:0 0 2px;}
+.workflow-say{font-size:12px;font-style:italic;margin:0;}
+@media(max-width:600px){
+  .talk-grid,.obj-grid,.mgr-grid,.from-to,.threeC-grid,.bottom-grid,.cadence-strip{grid-template-columns:1fr;}
+  .arrow{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-box"></div>
+    <span class="header-eyebrow">HOUZZ PRO</span>
+  </div>
+  <h1>Revenue Generation Play</h1>
+  <p>Combined AE Field Guide + Manager Coaching Playbook · 6-Week Program</p>
+  <div class="header-tags">
+    <span class="tag">Target: +20% revenue</span>
+    <span class="tag">Software-first positioning</span>
+    <span class="tag">Value-driven selling</span>
+    <span class="tag">GROW + SBI coaching</span>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav">
+  <button class="active" onclick="showTab('overview',this)">Overview</button>
+  <button onclick="showTab('ae',this)">AE Field Guide</button>
+  <button onclick="showTab('lyrics',this)">Lyrics &amp; Scripts</button>
+  <button onclick="showTab('manager',this)">Manager Guide</button>
+  <button onclick="showTab('cadence',this)">6-Week Cadence</button>
+  <button onclick="showTab('objections',this)">Objections</button>
+</div>
+
+<div class="content">
+
+<!-- ── OVERVIEW ── -->
+<div id="tab-overview" class="section active">
+  <div class="section-head"><h2>Play overview</h2><p>What we're doing, why it matters, and how it works.</p></div>
+  <div class="metric-grid">
+    <div class="metric"><p class="mlabel">Revenue target</p><p class="mnum">+20%</p><p class="msub">software conversion + pipeline quality</p></div>
+    <div class="metric"><p class="mlabel">Program length</p><p class="mnum">6 weeks</p><p class="msub">I Drive → We Drive → You Drive</p></div>
+    <div class="metric"><p class="mlabel">Call target</p><p class="mnum">10/day</p><p class="msub">5 calls/hr · 12 min breakdown</p></div>
+    <div class="metric"><p class="mlabel">Response SLA</p><p class="mnum">&lt;24 hrs</p><p class="msub">first call attempt after MarCom</p></div>
+  </div>
+  <div class="card">
+    <p class="label">We are moving from → to</p>
+    <div class="from-to">
+      <div class="from-box"><p class="ft-label">Old approach</p><p class="ft-text">Lead response + feature demo · inflated pipeline · flat close rates</p></div>
+      <div class="arrow">→</div>
+      <div class="to-box"><p class="ft-label">New standard</p><p class="ft-text">Value-driven selling + software-first positioning · qualified pipeline · higher close rate</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <p class="label">5-stage discovery framework</p>
+    <div class="step"><div class="step-num">1</div><div><p class="step-title">Get clear on the business</p><p class="step-q">"Walk me through your current workflow."</p><p class="step-goal">Understand how they operate — don't pitch yet.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div><p class="step-title">Expose what's not working</p><p class="step-q">"Where do things break down?"</p><p class="step-goal">Surface pain before mentioning Houzz Pro.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div><p class="step-title">Make the impact real</p><p class="step-q">"What does that cost you in time or money?"</p><p class="step-goal">Quantify the pain. This is your value leverage.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div><p class="step-title">Show a better way forward</p><p class="step-q">"If you fixed this, what would change?"</p><p class="step-goal">Let them articulate the value — don't do it for them.</p></div></div>
+    <div class="step"><div class="step-num">5</div><div><p class="step-title">Move the conversation forward</p><p class="step-q">"Next step would be a 20-min demo — does that make sense?"</p><p class="step-goal">Secure a concrete next step before ending the call.</p></div></div>
+  </div>
+  <div class="card">
+    <p class="label">Roles at a glance</p>
+    <div class="roles-grid">
+      <div class="role-card" style="border-left:3px solid var(--greenDark)"><p class="role-title">Sales manager</p><p class="role-desc">Own urgency, inspect pipeline, run structured 1:1s, coach with GROW + SBI.</p></div>
+      <div class="role-card" style="border-left:3px solid var(--green)"><p class="role-title">Lead AE</p><p class="role-desc">Set the pace, surface best practices, attend manager debriefs, be a champion.</p></div>
+      <div class="role-card" style="border-left:3px solid #888"><p class="role-title">Account executive</p><p class="role-desc">Execute weekly cadence, 100% MarCom same day, 100% first calls within 24 hrs, clean SFDC.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AE FIELD GUIDE ── -->
+<div id="tab-ae" class="section">
+  <div class="section-head"><h2>AE field guide</h2><p>Everything a rep needs to run the play from first touch to close.</p></div>
+  <div class="card">
+    <p class="label" style="margin-bottom:6px">5-stage call structure — every call, every time</p>
+    <p style="font-size:12px;color:var(--greenDark);font-weight:500;margin-bottom:14px">Complete the "Know Your Business" qualifiers before advancing past stage 2.</p>
+    <div class="step"><div class="step-num">1</div><div><p class="step-title">Get clear on the business</p><p class="step-q">"Walk me through how you manage projects today — from lead to invoice."</p><p class="step-goal">Goal: understand their current workflow, not pitch yours.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div><p class="step-title">Expose what's not working</p><p class="step-q">"Where does that process break down? What slips through the cracks?"</p><p class="step-goal">Goal: surface pain before mentioning Houzz Pro.</p></div></div>
+    <div class="qual-box">
+      <p class="qlabel">Know your business — mandatory qualifiers</p>
+      <div class="qual-item"><div class="qual-num">1</div><div><p class="qual-q">Is the call with the owner?</p><p class="qual-tip">If not, understand their influence level and who the decision maker is before proceeding.</p></div></div>
+      <div class="qual-item"><div class="qual-num">2</div><div><p class="qual-q">When do they want to implement change?</p><p class="qual-tip">Establishes urgency and timeline. No timeline = no qualified deal.</p></div></div>
+      <div class="qual-item"><div class="qual-num">3</div><div><p class="qual-q">Is status quo an option for them?</p><p class="qual-tip">If yes, you haven't exposed enough pain yet. Go back to stage 2.</p></div></div>
+      <div class="qual-item"><div class="qual-num">4</div><div><p class="qual-q">What's their decision-making process?</p><p class="qual-tip">Who else needs to be involved? What does a yes look like for them?</p></div></div>
+      <div class="qual-item"><div class="qual-num">5</div><div><p class="qual-q">What other software are they looking at?</p><p class="qual-tip">Understand the competitive landscape before you pitch. Tailor your story accordingly.</p></div></div>
+    </div>
+    <div class="step"><div class="step-num">3</div><div><p class="step-title">Make the impact real</p><p class="step-q">"What does that cost you — in time, margin, or client relationships?"</p><p class="step-goal">Goal: quantify the pain. This is your leverage for software-first.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div><p class="step-title">Show a better way forward</p><p class="step-q">"If that was fixed, what would change for your business?"</p><p class="step-goal">Goal: let them articulate the value — don't do it for them.</p></div></div>
+    <div class="step"><div class="step-num">5</div><div><p class="step-title">Move the conversation forward</p><p class="step-q">"Next step would be a 20-min demo of how other pros handle this — does that make sense?"</p><p class="step-goal">Goal: secure a concrete next step before ending the call.</p></div></div>
+  </div>
+  <div class="talk-grid">
+    <div class="talk-card" style="border-left:3px solid var(--greenDark)">
+      <p class="talk-label" style="color:var(--greenDark)">Outbound — new lead</p>
+      <p class="talk-text">"Hey [Name], saw you were just checking out Houzz Pro — quick question before I point you in the right direction… What were you hoping to improve or fix in your business?"</p>
+      <ul class="talk-tips"><li>Don't pitch. Don't demo. Diagnose immediately.</li><li>Anchor to their problem, not your product.</li><li>Goal: create problem awareness → qualified demo fast.</li></ul>
+    </div>
+    <div class="talk-card" style="border-left:3px solid var(--warn)">
+      <p class="talk-label" style="color:#a06800">Inbound — warm lead</p>
+      <p class="talk-text">"Most pros I talk to hit a wall managing projects across texts, spreadsheets, and email. That usually leads to missed timelines or margin leaks. How are you currently managing jobs end-to-end?"</p>
+      <ul class="talk-tips"><li>Lead with their likely pain — validate or redirect.</li><li>Goal: convert interest into an earned meeting.</li><li>Every call must answer: what's their problem + desired outcome?</li></ul>
+    </div>
+  </div>
+  <div class="card">
+    <p class="label">Houzz Pro value pitch — value story structure</p>
+    <div class="pitch-block" style="border-left:3px solid var(--greenDark);border-radius:0 8px 8px 0"><p class="plabel" style="color:var(--greenDark)">WHY — stir their emotions</p><p class="ptext" style="font-style:italic">"Most pros got into this business to build great things for clients — not to spend half their week chasing invoices, typing up estimates, and answering the same client questions over and over. We're here to give that time back."</p></div>
+    <div class="pitch-block" style="border-left:3px solid #a06800;border-radius:0 8px 8px 0"><p class="plabel" style="color:#a06800">HOW — in 3s</p><p class="ptext">Houzz Pro helps pros run better businesses in three ways: 1) streamlining the full project workflow from estimate to invoice, 2) professionalizing the client experience with approvals, mood boards, and branded proposals, and 3) surfacing the data pros need to make smarter decisions on margin and growth.</p></div>
+    <div class="pitch-block" style="border-left:3px solid #888;border-radius:0 8px 8px 0"><p class="plabel" style="color:#555">WHAT — proof points</p><p class="ptext">All-in-one tool, invoicing &amp; online payments, estimates &amp; takeoffs, client dashboard, product clipper &amp; sourcing, moodboards, lead management, time tracker, website services — one platform, no more spreadsheet juggling.</p></div>
+  </div>
+  <div class="card">
+    <p class="label">The 5 Whys — don't stop at the first answer</p>
+    <div class="why-row"><span class="why-label" style="color:var(--textSecondary)">Problem</span><span class="why-text">Pro says: "I'm just too busy right now."</span></div>
+    <div class="why-row"><span class="why-label" style="color:var(--textSecondary)">Why 1</span><span class="why-text">Why are you too busy? — "Clients are always asking for updates."</span></div>
+    <div class="why-row"><span class="why-label" style="color:var(--textSecondary)">Why 2</span><span class="why-text">Why is that taking so much time? — "I have no central place to show them progress."</span></div>
+    <div class="why-row"><span class="why-label" style="color:var(--textSecondary)">Why 3</span><span class="why-text">Why not? — "Everything lives in texts and spreadsheets."</span></div>
+    <div class="why-row"><span class="why-label" style="color:var(--textSecondary)">Why 4</span><span class="why-text">What does that cost you? — "I lose hours a week explaining what I've already done."</span></div>
+    <div class="why-row"><span class="why-label" style="color:var(--greenDark);font-weight:500">Root cause</span><span class="why-text" style="color:var(--greenDark);font-weight:500">→ No client-facing project visibility. Houzz Pro's client dashboard directly solves this.</span></div>
+  </div>
+</div>
+
+<!-- ── LYRICS ── -->
+<div id="tab-lyrics" class="section">
+  <div class="section-head"><h2>Lyrics &amp; scripts</h2><p>Word-for-word talk tracks for every stage of the customer journey.</p></div>
+  <div class="lyrics-subnav">
+    <button class="active" onclick="showLyrics('inbound',this)">Inbound Call</button>
+    <button onclick="showLyrics('outbound',this)">Outbound Call</button>
+    <button onclick="showLyrics('discovery',this)">Discovery Call</button>
+    <button onclick="showLyrics('aepre',this)">AE Pre-Sale</button>
+    <button onclick="showLyrics('aepost',this)">AE Post-Sale</button>
+  </div>
+
+  <!-- Inbound -->
+  <div id="lyrics-inbound" class="lyrics-section active">
+    <div class="lyrics-banner"><p class="lb-title">Inbound lead — first call</p><p class="lb-sub">The pro has already shown interest. Do not pitch. Diagnose immediately. Your goal is to confirm pain and earn a discovery call or close on the first call.</p></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Open</span></div><div class="script-body"><p class="lyric-line">"Hey [Name], this is [Your Name] from Houzz Pro — I saw you were just checking us out and wanted to connect quickly to make sure I point you in the right direction."</p><p class="note-line">→ Keep it warm and low-pressure. They came to you — don't blow it by pitching immediately.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Diagnose</span></div><div class="script-body"><p class="lyric-line">"Before I go into anything about Houzz Pro, I want to make sure what I show you is actually relevant to your business. Can I ask you a quick question?"</p><p class="lyric-line">"What made you start looking into Houzz Pro today — was there something specific going on in your business that's driving this?"</p><p class="note-line">→ Stop talking. Let them answer. This is the most important moment on the call.</p><p class="lyric-line">"Tell me more about that — how long has that been a problem for you?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(245,166,35,0.15);color:#a06800">Know your business</span></div><div class="script-body"><p class="note-line">→ Before advancing, you must get answers to all 5 qualifiers. These are not optional.</p><p class="lyric-line">"Quick question — am I speaking with the owner, or is there someone else involved in decisions like this?"</p><p class="lyric-line">"If this is the right fit, how quickly are you looking to make a change — are you wanting to be up and running in the next few weeks, or is this more of a longer-term look?"</p><p class="lyric-line">"Is doing nothing an option for you right now, or is this something you need to solve?"</p><p class="lyric-line">"When it comes to a decision like this, is it just you, or does anyone else need to be part of the conversation?"</p><p class="lyric-line">"Are you looking at any other tools right now, or is Houzz Pro your main focus?"</p><p class="note-line">→ If they are not the owner, not ready to decide, or status quo is fine — do not advance.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Bridge</span></div><div class="script-body"><p class="lyric-line">"Based on what you're describing, it sounds like [restate their pain in their words]. That's exactly what we help pros solve."</p><p class="lyric-line">"Most pros I talk to who are dealing with [pain point] tell me the biggest impact is [specific Houzz Pro capability tied to their pain]. Does that sound like what you're running into?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Move forward</span></div><div class="script-body"><p class="lyric-line">"I want to make sure I show you exactly what this looks like for your type of business. Let me pull up a quick demo — I can show you in about 20 minutes how other pros who do [their project type] are using this. Does that work right now, or should we grab a time this week?"</p><p class="note-line">→ If they have time now → go straight into the demo tied to their pain. If not → book the discovery call before ending. Do not leave without a next step.</p></div></div>
+  </div>
+
+  <!-- Outbound -->
+  <div id="lyrics-outbound" class="lyrics-section">
+    <div class="lyrics-banner"><p class="lb-title">Outbound lead — first call</p><p class="lb-sub">The pro did not reach out first. You have 30 seconds to earn the right to keep talking. Do not pitch. Create curiosity, surface pain, and move to a discovery call.</p></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Open</span></div><div class="script-body"><p class="lyric-line">"Hey [Name], this is [Your Name] from Houzz Pro — I know I'm catching you out of the blue, I'll be quick."</p><p class="lyric-line">"I work specifically with [contractors/designers/builders] in [region or niche], and I'm reaching out because a lot of pros I talk to are running into the same challenge right now — managing jobs across a bunch of different tools and still feeling like things are falling through the cracks."</p><p class="lyric-line">"Is that something you're dealing with, or has your process been pretty dialed in lately?"</p><p class="note-line">→ Stop talking. Their answer tells you everything. If they say "actually yeah" — you're in.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">If they engage</span></div><div class="script-body"><p class="lyric-line">"What does that look like for you — where does it break down the most? Is it the estimating side, keeping clients updated, getting paid on time, or something else?"</p><p class="note-line">→ Let them pick the pain. Don't list all the features — diagnose first.</p><p class="lyric-line">"How long has that been going on? And is it costing you time, money, or both?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(245,166,35,0.15);color:#a06800">Know your business</span></div><div class="script-body"><p class="note-line">→ Before advancing, you must get answers to all 5 qualifiers. These are not optional.</p><p class="lyric-line">"Can I ask — are you the one who would make a call like this, or is there a partner or office manager involved?"</p><p class="lyric-line">"If this was the right fit, is this something you'd want to move on quickly, or are you in more of a research phase?"</p><p class="lyric-line">"Is keeping things the way they are an option for you, or is this something you're committed to fixing?"</p><p class="lyric-line">"Is it just you making this call, or does anyone else need to be looped in?"</p><p class="lyric-line">"Are you talking to any other platforms, or are you open to seeing what we do first?"</p><p class="note-line">→ If they are not the decision maker, not ready to act, or status quo is acceptable — don't advance.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Bridge</span></div><div class="script-body"><p class="lyric-line">"Here's what I'm seeing with pros in your situation — [restate their pain]. The ones who've made a change tell me the biggest shift is [specific capability tied to their pain]. That's what I'd want to show you."</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Move forward</span></div><div class="script-body"><p class="lyric-line">"I don't want to take up more of your time right now, but I'd love to show you what this looks like for your type of work — it's about 20 minutes and I'd make it specific to how you run your jobs. Do you have any time this week?"</p><p class="note-line">→ Get a specific day and time. Do not say "I'll send you a link." Book the meeting before ending the call.</p></div></div>
+  </div>
+
+  <!-- Discovery -->
+  <div id="lyrics-discovery" class="lyrics-section">
+    <div class="lyrics-banner"><p class="lb-title">Discovery call — 5-stage structure</p><p class="lb-sub">This call has one job: understand the pro's business deeply enough to show them exactly how Houzz Pro solves their specific pain. Do not demo features. Diagnose first.</p></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Stage 1</span></div><div class="script-body"><p class="lyric-line">"Before I show you anything, I want to make sure what I walk you through is actually built around how you work — not just a generic demo. So let me ask you a few questions first."</p><p class="lyric-line">"Walk me through how you manage a project today — from the moment you get a lead, all the way through to getting paid. What does that look like?"</p><p class="note-line">→ Listen fully. Don't interrupt. Take notes. If their answer is vague: "Can you give me a specific example from a project you finished recently?"</p><p class="lyric-line">"What types of projects do you mostly work on — renovations, new builds, commercial, a mix?"</p><p class="lyric-line">"How do you typically price your work — is it fixed price, cost-plus, or does it depend on the job?"</p><p class="lyric-line">"How are you currently handling estimates? Are you using software, spreadsheets, or building them from scratch each time?"</p><p class="lyric-line">"And when it comes to invoicing and getting paid — what does that process look like today?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Stage 2</span></div><div class="script-body"><p class="lyric-line">"You've given me a good picture of how things run. Now let me ask — where does it tend to break down? What's the part of your process that takes up the most time or causes the most headaches?"</p><p class="note-line">→ If they dodge: "Think about a project from the last few months that didn't go as smoothly as you wanted — what got in the way?"</p><p class="lyric-line">"Is that something that happens on most jobs, or just certain types?"</p><p class="lyric-line">"What have you tried to do to fix it?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(245,166,35,0.15);color:#a06800">Mandatory gate</span></div><div class="script-body"><p class="note-line">→ These 5 questions are mandatory before advancing to stage 3. Every answer must be confirmed before you move forward.</p><p class="lyric-line">"Before we go further — am I speaking with the owner, or is there someone else who would be involved in a decision like this?"</p><p class="lyric-line">"If this turns out to be the right fit, how quickly are you looking to make a change? Are you thinking weeks, or is this more of a longer-term look?"</p><p class="lyric-line">"Is sticking with your current process an option, or is this something you've decided you need to solve?"</p><p class="lyric-line">"When it comes to a decision like this, is it just you, or does anyone else need to be part of the conversation?"</p><p class="lyric-line">"Are you evaluating any other platforms right now, or is this your main focus?"</p><p class="note-line">→ If status quo is acceptable, the decision maker is not present, or there is no timeline — stop and address this before proceeding.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Stage 3</span></div><div class="script-body"><p class="lyric-line">"I want to make sure I understand the real cost of this — not just the frustration, but what it's actually doing to your business."</p><p class="lyric-line">"When [their specific pain] happens — what does that cost you? Is it time, margin, client relationships, or all three?"</p><p class="note-line">→ If they hesitate: "Even a rough estimate is fine — how many hours a week would you say this takes you?"</p><p class="lyric-line">"And what does that mean for the rest of your business — are you turning down jobs, working nights and weekends, or losing track of where you stand financially on a project?"</p><p class="lyric-line">"If you had to put a number on it — what do you think this is costing you per month, or per job?"</p><p class="note-line">→ Let them quantify it. This is your anchor for the value conversation later.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Stage 4</span></div><div class="script-body"><p class="lyric-line">"If we could solve [their specific pain] — what would that change for you? What would you do with that time or that margin?"</p><p class="note-line">→ Let them articulate the value. Do not answer for them.</p><p class="lyric-line">"What would it mean for your business if you could send a professional estimate in under an hour, get client approval digitally, and collect payment the same day the work is approved?"</p><p class="lyric-line">"Based on everything you've shared, the two things I want to make sure you can do from day one in Houzz Pro are: send an estimate to a real client and accept an online payment. Those two things alone will change how your business runs. Let me show you exactly how."</p><p class="note-line">→ This is the pivot to the demo. Everything you show must be tied directly to the pain they described.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Stage 5</span></div><div class="script-body"><p class="lyric-line">"Based on what you've shared and what I've shown you — does this solve the problem you came in with?"</p><p class="lyric-line">"What questions do you have before we talk about getting you set up?"</p><p class="lyric-line">"The next step from here is to get you into Houzz Pro and get your first estimate and first online payment set up. That's the milestone that makes everything else click. Are you ready to move forward today, or is there something we need to address first?"</p><p class="note-line">→ If they hesitate → use 3C. If they're ready → move directly into the pre-sale close script.</p></div></div>
+  </div>
+
+  <!-- AE Pre-Sale -->
+  <div id="lyrics-aepre" class="lyrics-section">
+    <div class="lyrics-banner"><p class="lb-title">AE Pre-Sale — Support + test close (game plan version)</p></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Read the room</span></div><div class="script-body"><p class="lyric-line">"Before we get into pricing, does this solve what you need for [priority] and help fix [pain point]?"</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Set the game plan</span></div><div class="script-body"><p class="lyric-line">"What our pros love is how easy it is to be set up for success!"</p><p class="lyric-line">"Before we talk numbers, I want to walk you through what it looks like once you get started, so you can see how this helps solve [pain point] and support [Pro goal]."</p><p class="lyric-line">"The Implementation team will help bring your business into Houzz Pro so everything is set up organized, connected, and ready for you to use right away."</p><p class="lyric-line">"After Implementation, you will be trained by your Houzz Pro Partner who works with you to apply this to your business."</p><p class="lyric-line">"We want to make sure you're up and running quickly, feeling confident, and making progress toward [Pro goal]."</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(245,166,35,0.15);color:#a06800">Execute</span></div><div class="script-body"><p class="lyric-line">"Based on what you shared about [Pro goal] and the importance of solving [pain point 1], [pain point 2], and [pain point 3], the next step is to align on the right pricing option and get you scheduled with Implementation."</p></div></div>
+  </div>
+
+  <!-- AE Post-Sale -->
+  <div id="lyrics-aepost" class="lyrics-section">
+    <div class="lyrics-banner"><p class="lb-title">AE Post-Sale — Handoff, implementation booking + referral</p></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Read the room</span></div><div class="script-body"><p class="lyric-line">"Welcome to Houzz Pro! We're excited to get you started."</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Set the game plan</span></div><div class="script-body"><p class="lyric-line">"We will make sure you are set up the right way, from day one, so it fits how you work and helps you move toward your goals."</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(136,136,136,0.12);color:#555">Show the playbook</span></div><div class="script-body"><p class="lyric-line">"Let's get your Implementation call scheduled. Please pull up your calendar."</p><p class="note-line">→ After contract → schedule for after the Go Live Date, at point of sale.</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(245,166,35,0.15);color:#a06800">Execute</span></div><div class="script-body"><p class="lyric-line">"I have the Implementation calendar up now — Oh wow, we are filling up fast, I see two times — does [TIME1] or [TIME2] work?"</p><p class="note-line">→ Book the call.</p><p class="lyric-line">"Perfect — I've got you booked for [DAY &amp; TIME] with [NAME]."</p></div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(0,0,0,0.06);color:#555">Reinforce</span></div><div class="script-body">
+      <p class="lyric-line">"Before we hang up, I need to walk you through what you must have ready for your Implementation call — this is not optional. Your Implementation specialist will not be able to complete your setup without this information, and if we can't complete setup, we can't get you to your first estimate and first payment, which is the whole point."</p>
+      <div class="mandatory-box">
+        <p class="mb-label">Mandatory — must have ready for Implementation call</p>
+        <div class="mandatory-item"><div class="mandatory-num">1</div><div><p class="mandatory-title">Business logo</p><p class="mandatory-why">Required to set up your branded estimates and proposals.</p></div></div>
+        <div class="mandatory-item"><div class="mandatory-num">2</div><div><p class="mandatory-title">Estimate templates or past estimates</p><p class="mandatory-why">So we can build your pricing structure directly into Houzz Pro.</p></div></div>
+        <div class="mandatory-item"><div class="mandatory-num">3</div><div><p class="mandatory-title">Client and vendor contact list</p><p class="mandatory-why">To set up your first real project from day one.</p></div></div>
+        <div class="mandatory-item"><div class="mandatory-num">4</div><div><p class="mandatory-title">Product lists and cost codes</p><p class="mandatory-why">Required to build your first estimate accurately.</p></div></div>
+        <div class="mandatory-item"><div class="mandatory-num">5</div><div><p class="mandatory-title">Banking information for online payments</p><p class="mandatory-why">You will enter this privately on your side — this is required to activate online payments. Without it, you cannot collect payment through Houzz Pro. Do not come to the call without this.</p></div></div>
+        <div class="mandatory-item"><div class="mandatory-num">6</div><div><p class="mandatory-title">Active project details</p><p class="mandatory-why">Any current jobs you want migrated so you can start tracking them immediately.</p></div></div>
+      </div>
+      <p class="lyric-line">"The goal of your Implementation call is to send your first real estimate to a real client and accept your first online payment before the call ends. Everything we set up is in service of hitting that milestone. If you walk in without this information, we will have to reschedule."</p>
+      <p class="note-line">→ QuickBooks will be handled separately — do not worry about that for now.</p>
+    </div></div>
+    <div class="script-block"><div class="script-phase"><span style="background:rgba(76,175,0,0.15);color:var(--greenDark)">Close + referral</span></div><div class="script-body"><p class="lyric-line">"Congrats again on joining the Houzz Pro Community! Just like you, we grow our business through referrals from happy pros."</p><p class="lyric-line">"When you refer another pro who joins Houzz Pro, you can earn 10% of their total subscription value. When I told you that — who did you think about?"</p><p class="note-line">→ Add referral to SFDC.</p><p class="lyric-line">"Awesome, you are all set. [IS Name] will take it from here. Be on the lookout for an email: 'Welcome to Houzz Pro, Let's Get You Started!' If you need anything before you meet with [IS Name], just reach out."</p></div></div>
+  </div>
+</div>
+
+<!-- ── MANAGER GUIDE ── -->
+<div id="tab-manager" class="section">
+  <div class="section-head"><h2>Manager coaching guide</h2><p>Run the play with GROW coaching and SBI feedback. Don't rescue — develop.</p></div>
+  <div class="card">
+    <p class="label">Core principle: performance = potential − interference</p>
+    <div class="mgr-grid">
+      <div class="mgr-box" style="background:var(--greenLight)"><p class="label" style="color:var(--greenDark)">Great managers do</p><ul><li>Ask before telling</li><li>Tie feedback to observable behavior and impact</li><li>Reinforce the framework every single time</li><li>Drive rep ownership of outcomes</li></ul></div>
+      <div class="mgr-box" style="background:var(--red)"><p class="label" style="color:var(--redText)">Red flags to avoid</p><ul><li>Jumping in and solving the deal for the rep</li><li>Re-explaining the workflow instead of coaching it</li><li>Vague feedback ("that was good...")</li><li>Ignoring decision-making mistakes</li></ul></div>
+    </div>
+  </div>
+  <div class="card">
+    <p class="label">SBI → GROW feedback sequence</p>
+    <div class="sbi-box" style="background:var(--gray)">
+      <p style="font-size:13px;font-weight:500;margin:0 0 6px">Step 1: SBI — give clear, non-vague feedback first</p>
+      <p class="sbi-row"><strong style="color:var(--greenDark)">S — Situation:</strong> "In the discovery call with that remodeler this morning…"</p>
+      <p class="sbi-row"><strong style="color:var(--greenDark)">B — Behavior:</strong> "…you moved into the estimating demo before confirming how they currently price jobs."</p>
+      <p class="sbi-row"><strong style="color:var(--greenDark)">I — Impact:</strong> "That meant the demo didn't connect to their actual pain — they disengaged after about 4 minutes."</p>
+    </div>
+    <div class="sbi-box" style="background:var(--greenLight)">
+      <p style="font-size:13px;font-weight:500;color:var(--greenDark);margin:0 0 6px">Step 2: GROW — coach the path forward</p>
+      <p class="sbi-row"><strong>G — Goal:</strong> "What were you trying to accomplish in that demo?"</p>
+      <p class="sbi-row"><strong>R — Reality:</strong> "What did you actually learn about how they price before jumping in?"</p>
+      <p class="sbi-row"><strong>O — Options:</strong> "What question could have confirmed their pricing model first?"</p>
+      <p class="sbi-row"><strong>W — Way forward:</strong> "What will you ask on the next call before moving to any product feature?"</p>
+    </div>
+  </div>
+  <p style="font-size:14px;font-weight:500;margin:0 0 10px">GROW coaching scenarios — Houzz Pro specific</p>
+  <div class="grow-card"><p class="grow-scenario">Scenario: Rep jumps to product demo without confirming the pro's pain</p><div class="grow-row"><span class="grow-label" style="color:var(--green)">G — Goal</span><span class="grow-text">Help the rep connect product features to the specific workflow pain they uncovered — or should have uncovered.</span></div><div class="grow-row"><span class="grow-label" style="color:#888">R — Reality</span><span class="grow-text">Review the Gong call: at what point did they pitch? What had they confirmed about the pro's current process?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--warn)">O — Options</span><span class="grow-text">What question could they have asked after stage 2 before advancing to demo?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--greenDark)">W — Way Forward</span><span class="grow-text">Before your next demo, confirm: billing model, current project management method, and one specific frustration. No demo until those three are confirmed.</span></div></div>
+  <div class="grow-card"><p class="grow-scenario">Scenario: Rep is relying on inbound leads and not self-prospecting</p><div class="grow-row"><span class="grow-label" style="color:var(--green)">G — Goal</span><span class="grow-text">Build a consistent daily prospecting habit even when the pipeline looks full.</span></div><div class="grow-row"><span class="grow-label" style="color:#888">R — Reality</span><span class="grow-text">What does your current pipeline look like 30–60 days out? Where are your top-of-funnel activities happening?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--warn)">O — Options</span><span class="grow-text">What outreach channels are you not using — LinkedIn, referrals, past churned pros, contractor networks?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--greenDark)">W — Way Forward</span><span class="grow-text">This week: identify 10 target pros from CRM or Gong Engage. Execute outreach on at least 5 before next 1:1.</span></div></div>
+  <div class="grow-card"><p class="grow-scenario">Scenario: Rep has high proposal volume but low close rate</p><div class="grow-row"><span class="grow-label" style="color:var(--green)">G — Goal</span><span class="grow-text">Improve proposal-to-close conversion by ensuring the right stakeholders are confirmed and urgency established before proposal stage.</span></div><div class="grow-row"><span class="grow-label" style="color:#888">R — Reality</span><span class="grow-text">In the last 5 deals that didn't close: who was on the calls? Was a decision maker ever confirmed? Was budget or timeline discussed?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--warn)">O — Options</span><span class="grow-text">How could you use the Know Your Business qualifiers earlier to flag unqualified deals before investing in a proposal?</span></div><div class="grow-row"><span class="grow-label" style="color:var(--greenDark)">W — Way Forward</span><span class="grow-text">Apply the Know Your Business checklist to every active deal this week. Flag any deal missing a confirmed decision maker or implementation timeline.</span></div></div>
+  <div class="card" style="margin-top:1.25rem">
+    <p class="label">Symptoms → coaching focus map</p>
+    <div class="symptom-row"><span class="symptom-label">Call hesitancy or heavy reliance on inbound</span><span class="symptom-fix">Hunting + prospecting mindset. Use GROW to build daily outreach routine.</span></div>
+    <div class="symptom-row"><span class="symptom-label">Deals stuck at proposal with no decision</span><span class="symptom-fix">Know Your Business qualifiers — is there a real decision maker and timeline confirmed?</span></div>
+    <div class="symptom-row"><span class="symptom-label">Low discovery depth — surface-level questions</span><span class="symptom-fix">Value-zone questioning + 5 Whys. Review Gong calls together.</span></div>
+    <div class="symptom-row"><span class="symptom-label">High demo volume, low engagement</span><span class="symptom-fix">Demo should follow confirmed pain. Coach the 5-stage structure.</span></div>
+    <div class="symptom-row"><span class="symptom-label">Above-average discounting</span><span class="symptom-fix">Value protection + negotiation discipline. Coach the 3C objection framework.</span></div>
+    <div class="symptom-row"><span class="symptom-label">Vague pipeline / poor forecast accuracy</span><span class="symptom-fix">Pipeline hygiene + next step clarity. Run live pipeline clean-up in 1:1.</span></div>
+  </div>
+</div>
+
+<!-- ── 6-WEEK CADENCE ── -->
+<div id="tab-cadence" class="section">
+  <div class="section-head"><h2>6-week training plan</h2><p>Select a session and toggle between the AE and Manager version.</p></div>
+  <div class="phase-legend">
+    <div class="phase-box" style="background:var(--greenLight);border-left:3px solid var(--greenDark)"><p class="phase-title" style="color:var(--greenDark)">I Drive · Wk 0–2</p><p class="phase-desc">Enablement coach leads. Managers learn first, then teach reps.</p></div>
+    <div class="phase-box" style="background:var(--warnLight);border-left:3px solid #a06800"><p class="phase-title" style="color:#a06800">We Drive · Wk 3–4</p><p class="phase-desc">Co-led sessions. Managers coaching in real time.</p></div>
+    <div class="phase-box" style="background:var(--gray);border-left:3px solid #555"><p class="phase-title" style="color:#555">You Drive · Wk 5–6</p><p class="phase-desc">Managers fully own delivery and coaching.</p></div>
+  </div>
+  <div class="week-pills" id="weekPills"></div>
+  <div class="card" id="sessionCard">
+    <div class="session-header">
+      <div>
+        <div class="session-meta"><span class="session-phase-badge" id="sessionPhaseBadge"></span><span class="session-week" id="sessionWeekLabel"></span></div>
+        <h3 class="session-title" id="sessionTitle"></h3>
+      </div>
+      <div class="role-toggle" id="roleToggle">
+        <button class="role-btn active" onclick="setRole('rep',this)">AE version</button>
+        <button class="role-btn" onclick="setRole('mgr',this)">Manager version</button>
+      </div>
+    </div>
+    <div id="sessionContent"></div>
+  </div>
+  <div class="card">
+    <p class="label">Weekly activity cadence</p>
+    <div class="cadence-strip">
+      <div class="day-box" style="background:var(--greenLight)"><p class="day-title" style="color:var(--greenDark)">Mon</p><ul class="day-list"><li>Marketing activity (LICP + SOS)</li><li>Enablement session</li><li>Pipeline + coaching</li></ul></div>
+      <div class="day-box" style="background:var(--warnLight)"><p class="day-title" style="color:#a06800">Tue</p><ul class="day-list"><li>Sales follow-up activity</li><li>Field work assignment</li></ul></div>
+      <div class="day-box" style="background:var(--gray)"><p class="day-title" style="color:#555">Wed</p><ul class="day-list"><li>Sales follow-up activity</li></ul></div>
+      <div class="day-box" style="background:var(--gray)"><p class="day-title" style="color:#555">Thu</p><ul class="day-list"><li>Sales follow-up activity</li></ul></div>
+      <div class="day-box" style="background:var(--red)"><p class="day-title" style="color:var(--redText)">Fri</p><ul class="day-list"><li>Metrics + reporting</li><li>SFDC hygiene</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── OBJECTIONS ── -->
+<div id="tab-objections" class="section">
+  <div class="section-head"><h2>Objection handling — 3C framework</h2><p>Connect → Clarify → Continue. Never rescue. Never discount first.</p></div>
+  <div class="card">
+    <p class="label">The 3C method</p>
+    <div class="threeC-grid">
+      <div class="threeC-item" style="background:var(--greenLight)"><p class="threeC-title" style="color:var(--greenDark)">Connect</p><p class="threeC-desc">Acknowledge the concern and validate it from their point of view. Don't fight the objection.</p></div>
+      <div class="threeC-item" style="background:var(--warnLight)"><p class="threeC-title" style="color:#a06800">Clarify</p><p class="threeC-desc">Ask a follow-up to understand the real concern beneath the stated one. Objections often mask 1 of 4 fears.</p></div>
+      <div class="threeC-item" style="background:var(--gray)"><p class="threeC-title" style="color:#555">Continue</p><p class="threeC-desc">Provide the insight, story, or proof needed to address the root fear — then advance.</p></div>
+    </div>
+    <p style="font-size:12px;color:var(--textSecondary)">The 4 fears beneath objections: fear of being taken advantage of · fear of rejection · fear of change · fear of making a mistake.</p>
+  </div>
+  <div class="obj-card"><p class="obj-title">Objection: <span style="color:var(--warn)">"It's too expensive."</span></p><div class="obj-grid"><div class="obj-connect"><p class="obj-inner-label" style="color:var(--greenDark)">Connect</p><p class="obj-inner-text">I hear that — budget is always a real consideration, and I don't want to waste your time with something that doesn't fit.</p></div><div class="obj-cont"><p class="obj-inner-label" style="color:#a06800">Continue</p><p class="obj-inner-text">Pros who've switched from spreadsheets typically recover the cost in the first month from faster invoicing and fewer change-order disputes. What's one job from the last 6 months where margin slipped because of a process issue?</p></div></div></div>
+  <div class="obj-card"><p class="obj-title">Objection: <span style="color:var(--warn)">"I don't have time to learn new software."</span></p><div class="obj-grid"><div class="obj-connect"><p class="obj-inner-label" style="color:var(--greenDark)">Connect</p><p class="obj-inner-text">Totally fair — most pros I talk to are already stretched thin. The last thing you need is another tool that takes 3 months to figure out.</p></div><div class="obj-cont"><p class="obj-inner-label" style="color:#a06800">Continue</p><p class="obj-inner-text">Most pros are running live within a week, and the time savings show up in the first project — especially on estimates and client communication. What does your current estimate process look like?</p></div></div></div>
+  <div class="obj-card"><p class="obj-title">Objection: <span style="color:var(--warn)">"I already have a system that works."</span></p><div class="obj-grid"><div class="obj-connect"><p class="obj-inner-label" style="color:var(--greenDark)">Connect</p><p class="obj-inner-text">Good — that's actually the best place to start. If something's already working, I don't want to fix what isn't broken.</p></div><div class="obj-cont"><p class="obj-inner-label" style="color:#a06800">Continue</p><p class="obj-inner-text">When you say "works," is it fully integrated, or are there still pieces you're stitching together manually? Most pros have something, but there's usually one piece that still causes friction.</p></div></div></div>
+  <div class="obj-card"><p class="obj-title">Objection: <span style="color:var(--warn)">"I need to think it over."</span></p><div class="obj-grid"><div class="obj-connect"><p class="obj-inner-label" style="color:var(--greenDark)">Connect</p><p class="obj-inner-text">Of course — this is a real decision and I want you to be confident in it.</p></div><div class="obj-cont"><p class="obj-inner-label" style="color:#a06800">Continue</p><p class="obj-inner-text">Is there a specific part of what we talked about that you're still weighing? What would need to be true for this to be a clear yes?</p></div></div></div>
+  <div class="obj-card"><p class="obj-title">Objection: <span style="color:var(--warn)">"I want to check out some other options first."</span></p><div class="obj-grid"><div class="obj-connect"><p class="obj-inner-label" style="color:var(--greenDark)">Connect</p><p class="obj-inner-text">That makes sense — you should feel good about what you're choosing.</p></div><div class="obj-cont"><p class="obj-inner-label" style="color:#a06800">Continue</p><p class="obj-inner-text">What's most important to you as you evaluate? Most pros tell me it comes down to ease of use, invoicing speed, or client experience — is that the frame for you, or is there something else I should know?</p></div></div></div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /wrap -->
+
+<script>
+// ── Tab navigation ──
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+// ── Lyrics sub-nav ──
+function showLyrics(id, btn) {
+  document.querySelectorAll('.lyrics-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.lyrics-subnav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('lyrics-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── 6-Week Cadence data ──
+var sessions = [
+  {wk:0,phase:0,title:"Manager orientation — play launch",rep:null,mgr:{objective:"Create alignment, urgency, and commitment before execution begins. Managers understand the play before reps see it.",teach:["Play mission: increase revenue 20%+ by improving software conversion, pipeline quality, selling skills, and demo effectiveness.","The shift: from lead response + feature demo → value-driven selling + software-first positioning.","What happens if we do nothing: pipeline stays inflated but weak, close rates flat, software revenue underperforms.","The 6-week cadence: I Drive (wk 1–2), We Drive (wk 3–4), You Drive (wk 5–6).","Manager roles: ensure pre-work completion, communicate urgency, maintain cadence, connect with Enablement on Gong/SFDC metrics.","Select and recruit a Lead AE before Session 1."],practice:"Build your own 'perfect week' manager calendar. Map when you will run 1:1s, pipeline reviews, and call coaching sessions.",coaching:"Use SBI + GROW from day one. Practice giving one SBI piece of feedback on a recent call before Session 1.",cta:"Have 1:1 structure ready. Lead AE identified. Urgency message drafted for your team."}}},
+  {wk:1,phase:0,title:"Play mechanics + operating system",mgr:{objective:"Managers can run a structured 1:1 and explain the play operating system clearly before reps see it.",teach:["Play overview: goals, revenue target, the 20% mission.","Weekly cadence: Mon (marketing + enablement), Tue–Thu (follow-up), Fri (metrics + SFDC hygiene).","Single call breakdown: 5 calls/hr, 12 min per call, ~10 calls/day in ~2 hrs of dialing.","1:1 structure: pipeline review + call coaching + field work debrief. Use GROW for every coaching moment.","SBI feedback model: Situation → Behavior → Impact. No vague feedback. Observable behavior + impact only."],practice:"Role play: manager runs a structured 1:1 with a peer using GROW. Coach on one Gong call using SBI.",coaching:"Red flags to avoid: solving deals for reps, giving vague feedback ('good call!'), skipping next-step confirmation in pipeline reviews.",cta:"Run first structured 1:1 with each rep. Review 2 Gong calls using SBI before Session 2."},rep:{objective:"Reps understand the play, why it matters, and what their weekly operating rhythm looks like.",teach:["Play mission: +20% revenue through better software conversion, pipeline quality, and value-driven selling.","What we're changing: moving from feature demos to diagnosing problems first.","WIIFM: higher quality pipeline, better close rates, more software deals, peer collaboration.","Weekly cadence walk-through: every day has a purpose.","Single call breakdown: 5 calls/hr, 12 min each.","CRM check: SFDC documentation requirements — what must be logged after every call."],practice:"Build your 'perfect week' calendar. Map prospecting blocks, follow-up time, pipeline review prep, and admin.",drill:"Pair role play: practice your inbound and outbound opening using the two talk tracks. Goal: don't pitch, diagnose.",cta:"Implement perfect week calendar immediately. 100% of MarCom sent same day. 100% of first call attempts within 24 hrs."}},
+  {wk:2,phase:0,title:"Pre-qualification + gaining access",mgr:{objective:"Managers can inspect MQL quality, identify reps who over-rely on inbound, and coach outreach messaging and gatekeeper navigation.",teach:["Know Your Business qualifiers: the 5 mandatory questions every rep must answer before advancing a deal.","Symptoms of weak pre-qualification: call hesitancy, over-reliance on marketing, low proposal-to-Closed Won rate.","GROW coaching for pre-qualification: rep hesitant to call, relies on inbound. Coach through G/R/O/W.","Gatekeeper navigation principles: treat them with respect, get to know them, have a strong call opening."],practice:"Listen to 2 Gong calls together. Write SBI feedback on outreach and access. Role play: coach a rep who relies on marketing leads.",coaching:"Action plan: identify sellers needing additional qualification support, assign targeted training, review personalized action plans.",cta:"Coach 2 outreach calls per rep this week. Flag any rep with <10 new outreach attempts."},rep:{objective:"Reps can pre-qualify a prospect in under 2 minutes and navigate to the decision maker confidently.",teach:["Why pre-qualify: saves time, improves pipeline quality, prevents late-stage losses.","The 5 Know Your Business qualifiers — memorize and use on every call before advancing.","Behavioral styles: Doer (control, brief/direct), Talker (acceptance, relationship-first), Thinker (details/data), Guardian (stability/patience).","Outreach strategy: best days (Wed/Thu), best times (4–5pm), always make 6+ attempts, call back within 5 min of inbound.","Outbound talk track: 'Hey [Name], saw you were checking out Houzz Pro — quick question before I point you in the right direction… What were you hoping to improve or fix?'","Inbound talk track: 'Most builders I talk to hit a wall managing projects across texts, spreadsheets, and email. How are you currently managing jobs end-to-end?'"],practice:"Role play: cold call → gatekeeper → decision maker. 3 rounds, rotate roles.",drill:"Live outreach: make 5 outreach attempts during or immediately after the session.",cta:"Execute 10+ new outreach attempts before Session 3. Run every call through the Know Your Business qualifiers."}},
+  {wk:3,phase:1,title:"Discovery — the 5-stage structure",mgr:{objective:"Managers coach discovery depth and distinguish value-zone from product-zone questions.",teach:["The 5-stage call structure and where Know Your Business qualifiers sit (between stages 2 and 3 — they are a gate, not a conversation).","Discovery zone model: Product Zone (danger), Need Zone (good), Value Zone (transformative). Coach reps to stay in the Value Zone.","GROW coaching exercise for discovery: rep ran a surface-level call, didn't confirm pain. G/R/O/W walk-through.","Listening: the 7-second rule — silence is not failure. Listen to understand, not to respond."],practice:"Listen to 2 Gong calls as a group. Identify which discovery zone the questions were in. Write SBI feedback on depth. GROW role play.",coaching:"Flag calls where rep jumped to product demo before confirming pain. This is the #1 coaching priority in weeks 3–4.",cta:"Review 2 discovery calls per rep. Coach ONLY on discovery depth — not pitch, not product."},rep:{objective:"Reps can run a full discovery call using the 5-stage structure and ask value-zone questions that expose real pain.",teach:["Stage 1: 'Walk me through how you manage projects today.' If vague, ask for an example from last week.","Stage 2: 'Where does that break down?' If they dodge: 'Can you share a recent challenge?'","Know Your Business qualifiers — confirm all 5 before advancing to stage 3.","Stage 3: 'What does that cost you in time or money?' If hesitant: 'Rough estimate is fine — just ballpark it.'","Stage 4: 'If you fixed this, what would change?' If generic: 'What would that mean for your bottom line?'","Stage 5: 'Next step would be a 20-min demo — does that make sense?'","The 5 Whys: don't accept the first answer. Keep asking why until you reach the root cause."],practice:"Partner role play: Rep = seller, Partner = builder with messy workflow. Goal: get to 'impact' (stage 3) before talking about product.",drill:"5 Whys exercise: each rep takes a current prospect problem and runs the 5 Whys to find the root cause. Share with the group.",cta:"Run 2 real discovery calls using the 5-stage structure before Session 4. Record in Gong. Manager will review."}},
+  {wk:4,phase:1,title:"Pipeline integrity + inspection",mgr:{objective:"Managers run a structured pipeline review, identify inflated deals, and coach reps to own pipeline hygiene.",teach:["What good pipeline looks like: every deal has a confirmed next step, clear decision maker, timeline, and documented discovery notes in SFDC.","Red flags: deals with no next step, no stakeholder confirmed, stuck in same stage 2+ weeks.","Forecast accuracy: only count deals where all Know Your Business qualifiers are answered affirmatively.","Pipeline review structure: what did you learn? What's the next step? What's blocking it? Use GROW, not solving."],practice:"Live pipeline clean-up: pull the team's pipeline and work through 3–5 deals together using GROW on each one.",coaching:"Reps who can't answer 'what's the next step?' on any deal need immediate coaching. That deal should be de-staged or removed.",cta:"Run a full pipeline review with each rep. Every deal must have a documented next step before end of week."},rep:{objective:"Reps own their pipeline hygiene and can accurately forecast which deals will close.",teach:["Why pipeline integrity matters: inflated pipeline = false confidence = missed quota.","The deal hygiene checklist: all 5 Know Your Business qualifiers answered, next step documented with date and owner, SFDC updated within 24 hrs.","Next steps discipline: a next step is not 'follow up next week' — it is a specific action with a specific date and specific owner.","Deal stages: what it actually means to be in each stage. Don't advance a deal unless the criteria are met."],practice:"Live pipeline clean-up: each rep opens their own SFDC and we clean deals together.",drill:"For each deal: can you answer all 5 Know Your Business qualifiers? If not — what's the plan to get the answers?",cta:"Clean + validate all active deals in SFDC. Every deal must have a next step logged before Session 5."}},
+  {wk:5,phase:1,title:"Deep discovery + value expansion",mgr:{objective:"Managers coach root cause analysis and deal expansion — finding new opportunities inside existing accounts.",teach:["Deep discovery: the 5 Whys applied to active deals. Reps often stop at the surface problem and miss the root cause.","Deal expansion: once a pro is sold on one workflow, what's the next logical workflow? (client dashboard, online payments, job costing)","Upsell triggers: listen for pain points that map to additional Houzz Pro features during IS handoff notes."],practice:"5 Whys exercise + upsell role play. Manager coaches deal expansion on 1 active deal per rep.",coaching:"Coach reps to review IS + CAM notes for expansion signals. The AE → IS → CAM handoff contains gold — reps should be mining it.",cta:"Each rep identifies 1 active deal to expand. Bring the expansion plan to Session 6."},rep:{objective:"Reps can apply the 5 Whys to surface root causes and identify expansion opportunities inside existing deals.",teach:["Root cause analysis with 5 Whys: define the problem, ask why 5 times, don't try to solve while asking.","The questioning funnel: Question → Probe → Summarize → Close.","Expansion map: Estimates → Client Dashboard → Online Payments → Job Costing → Clipper & Sourcing → Website Services.","How to re-open discovery: 'Since we last spoke, has anything changed in how you're managing [X]?'"],practice:"5 Whys exercise on a real current prospect. Run the funnel down to root cause and share with the group.",drill:"Upsell role play: rep has a pro who purchased estimates only. Surface a pain that leads to discussing client dashboard or online payments.",cta:"Identify 1 active deal to expand. Run a 5 Whys on the deal and bring findings to Session 6."}},
+  {wk:6,phase:1,title:"Solutioning + value story",mgr:{objective:"Managers coach reps to connect their solution to the pro's specific pain using the value story structure — not feature selling.",teach:["Value story structure: Open with their WHY (stir emotions), state the Purpose, share Ideas in 3s (then unpack), close with a clear Call to Action.","Why stories beat features: 63% of people remember stories. Only 5% remember statistics.","Lead with WHY → HOW (in 3s) → WHAT (features). Never the other way.","Coaching the pitch: listen for feature selling vs. value selling."],practice:"Each rep delivers their Houzz Pro value story pitch. Manager and peers give SBI feedback: Did it lead with WHY? Three clear ideas? Value language?",coaching:"Most common miss: reps skip to WHAT (features) without establishing the pro's WHY. Coach the opening 60 seconds first.",cta:"Each rep revises pitch based on feedback. Deliver 1 live value story conversation before Session 7."},rep:{objective:"Reps can deliver a compelling, value-centered pitch using the value story structure — tailored to the specific pro's pain.",teach:["Open with WHY: 'Most pros got into this business to build great things for clients — not to spend half their week chasing invoices and typing up estimates.'","State the purpose: 'I want to spend the next 20 minutes showing you how to get that time back.'","Share ideas in 3s: 'Houzz Pro helps in three main ways…' Then unpack each one with the pro's specific pain in mind.","Call to Action: 'Based on what you shared, the next step is to get you scheduled with Implementation — does [date/time] work?'","67% of buyers say the pitch wasn't tailored to their needs. Always connect the pitch to what you discovered in stages 1–3."],practice:"Individual: build your Houzz Pro value story pitch for a current prospect. Pairs: deliver it. Partner gives SBI feedback.",drill:"Rewrite your opening 60 seconds so it leads with the pro's WHY — not a product feature. Share with manager.",cta:"Deliver 1 full value story conversation on a live deal before Session 7."}},
+  {wk:7,phase:2,title:"Objection handling — 3C framework",mgr:{objective:"Managers coach objection handling without rescuing the rep — recognizing patterns and coaching response strategies.",teach:["The 3C framework: Connect (acknowledge, validate), Clarify (ask — what's the real fear?), Continue (provide insight, advance).","The 4 fears beneath objections: (1) Being taken advantage of, (2) Rejection, (3) Change, (4) Making a mistake.","The cardinal rule: never give without getting. Don't discount to close.","Manager's role: don't rescue the rep by jumping in during the call. Review Gong calls and coach in the 1:1 after."],practice:"Listen to 2 Gong calls with objections. Write SBI feedback on how the rep responded. GROW role play the coaching conversation.",coaching:"Top Houzz Pro objection patterns: 'It's too expensive,' 'I don't have time to learn new software,' 'I already have something that works,' 'I need to think about it.'",cta:"Coach 2 objection scenarios per rep using GROW. Apply in live deals this week."},rep:{objective:"Reps can handle the top 5 Houzz Pro objections without discounting, panicking, or going quiet.",teach:["3C: Connect → Clarify → Continue. Never fight an objection. Validate, probe, then provide insight.","Connect: 'I hear that — [restate concern]. That's a real consideration.'","Clarify: 'Can I ask — is it the cost itself, or more about whether the value is there for your business?'","Continue: Provide the insight that addresses the root fear. Use a pro story. Then advance.","The Agreement Staircase: walk the pro through a series of small agreements before the close."],practice:"Battle of the challenges: facilitator presents an objection, reps respond using 3C. Class votes on the best response.",drill:"Role play all 5 top objections in pairs. Each rep must use the Connect → Clarify → Continue structure exactly.",cta:"Apply 3C in at least 2 live objection moments before Session 8. Log the outcome in Gong notes."}},
+  {wk:8,phase:2,title:"Pipeline integrity — mid-play review",mgr:{objective:"Managers run a rigorous mid-play pipeline review, assess deal quality, and recalibrate forecast accuracy.",teach:["Mid-play audit: for every deal — who is the decision maker, what is the timeline, what is the next step, what is the pro's primary pain?","Forecast calibration: remove or de-stage any deal that can't answer the Know Your Business qualifiers.","Deal progression coaching: use GROW to coach reps on deals stuck in the same stage for more than 2 weeks."],practice:"Live pipeline clean-up session. Work through the full team pipeline together — stage, clean, and assign next steps.",coaching:"After this review you should know exactly which reps are on track, which need discovery coaching, and which have pipeline but weak deals.",cta:"Every rep leaves this session with a clean pipeline and a clear next step on every open deal."},rep:{objective:"Reps can self-audit their pipeline and accurately identify which deals are real vs. inflated.",teach:["Pipeline self-audit: decision maker confirmed? Real timeline? All Know Your Business qualifiers answered? Documented next step with a date?","The cost of a bad pipeline: inflated pipeline creates false confidence, skews forecast, and distracts from the right deals.","Deal progression: if a deal has been in the same stage for more than 2 weeks without a next step, it moves or gets removed."],practice:"Each rep opens their SFDC live. Apply the self-audit to every deal. Flag anything that can't pass the 4-question test.",drill:"For your top 3 deals: what is the specific next step, who owns it, and what is the date? If you can't answer — that's your homework.",cta:"Fully updated pipeline in SFDC before Session 9."}},
+  {wk:9,phase:2,title:"Deal progression + commitment",mgr:{objective:"Managers enforce strong next steps and coach reps to move deals forward with clarity and commitment.",teach:["Weak vs. strong next steps: weak = 'I'll follow up next week.' Strong = 'I'll send a calendar invite for Tuesday at 2pm to walk through pricing together — does that work?'","The Agreement Staircase: coach reps to walk pros through a series of small agreements before the close.","Securing commitment: 'Based on everything we've covered, does this feel like the right fit for your business?'"],practice:"Weak vs. strong next steps exercise: facilitator reads a vague next step, reps rewrite it as a strong commitment.",coaching:"Inspect every deal's next step in this week's pipeline review. Any deal without a specific, dated next step gets coaching immediately.",cta:"Lock next steps on all open deals before Session 10. Every deal must have a date and an owner."},rep:{objective:"Reps can secure strong next steps on every call and walk a pro through the Agreement Staircase to build commitment.",teach:["Why next steps matter: no next step = no deal. A vague next step = a lost deal in slow motion.","Strong next step formula: specific action + specific date + specific owner.","The Agreement Staircase: build a series of small yeses before the big yes.","Creating urgency: 'Our Implementation team fills up fast — if we get you scheduled now, you could be live by [date].'"],practice:"Agreement Staircase role play: rep walks a pro from 'tell me more' to a committed next step using 5 small agreements.",drill:"Rewrite your 3 weakest deal next steps from SFDC as strong commitments. Share with your manager.",cta:"Lock all deal next steps before Session 10. No deal advances without a specific dated action."}},
+  {wk:10,phase:2,title:"Negotiation — protect value",mgr:{objective:"Managers coach negotiation discipline — protecting value and avoiding unnecessary discounting.",teach:["Degrees of desire: Wish (best possible) → Aspiration (what's fair) → Bottom Line (least acceptable).","BATNA/WATNA: Best and Worst Alternative to a Negotiated Agreement. Know both before the call.","The cardinal rule: never give a concession without getting one in return."],practice:"Negotiation role play: manager plays a pro pushing hard on price. Rep must use 3C and the cardinal rule. No unconditional concessions.",coaching:"Pull Gong calls where reps discounted. Use SBI to show the specific moment the rep gave ground without getting anything in return.",cta:"Coach 1 live negotiation per rep this week. Review outcome in next 1:1."},rep:{objective:"Reps can negotiate with discipline — protecting the value of Houzz Pro without defaulting to discounting.",teach:["Negotiation mindset: price is only an issue when value hasn't been established. Go back to the pain and the ROI.","Know your Wish, Aspiration, and Bottom Line before every pricing conversation.","Cardinal rule: never give without getting. 'If I can look at [X], could you commit to getting started by [date]?'","Handling pricing pressure: 'Pros who switched from spreadsheets typically recover the cost in the first month from faster invoicing and fewer change-order disputes.'"],practice:"Negotiation role play in pairs: one rep plays a pro pushing on price, the other defends value using the cardinal rule. Rotate.",drill:"Write your Wish, Aspiration, and Bottom Line for your top 2 active deals. Share with your manager.",cta:"Apply negotiation discipline in at least 1 active deal this week. Log the outcome in SFDC."}},
+  {wk:11,phase:2,title:"Closing + implementation handoff",mgr:{objective:"Managers coach close readiness, deal risk identification, and a clean handoff to Implementation.",teach:["Close readiness checklist: decision maker confirmed, pain documented, value story delivered, objections handled, Agreement Staircase complete.","Deal risk signals: pro goes quiet, competitor introduced late, decision maker changes, timeline slips.","The implementation handoff: AE → IS must include pro's primary pain, billing model, current tools, implementation timeline expectation.","Referral ask: after close — 'When I mentioned you can earn 10% for referring someone — who came to mind?'"],practice:"Close scenario role plays: manager presents 3 deal scenarios. Rep must close or advance each one.",coaching:"Review all 'closeable' deals. Any deal stuck here for more than 2 weeks needs a deal strategy session, not another follow-up.",cta:"Close or advance 1 deal before Session 12. Complete the implementation handoff form for every deal that closes."},rep:{objective:"Reps can identify close-ready deals, deliver a confident close, and hand off to Implementation cleanly.",teach:["Close readiness self-check: know the decision maker, pain, timeline, and next step. If yes — ask for the business.","Closing language: 'Based on everything we've covered — does moving forward today make sense?' Then stop talking.","Handling final hesitation: 'What's the one thing that would make this a clear yes?'","Creating urgency: 'Our Implementation team books up fast — if we get you scheduled now, you could be live by [date].'","The referral ask: 'We grow through referrals from happy pros. When I mentioned you can earn 10% — who came to mind?'"],practice:"Closing role plays: 3 scenarios — a deal that's ready, a deal with a final objection, a deal where the pro needs urgency.",drill:"For your top 3 active deals: write out exactly how you will ask for the business on the next call.",cta:"Close or advance 1 deal before Session 12. Submit clean implementation handoff for every closed deal."}},
+  {wk:12,phase:2,title:"Play close — wins, lessons + what's next",mgr:{objective:"Celebrate wins, capture lessons, recalibrate coaching cadence, and set the standard going forward.",teach:["Play review: compare pipeline quality, close rates, and software deals at week 1 vs. week 12.","Celebrate specific wins — best discovery, best objection handling, best pipeline hygiene.","What to sustain: the 1:1 structure, Gong call reviews, pipeline hygiene expectations, GROW + SBI rhythm.","What to adjust: identify 2–3 skill gaps that need continued focus. Build into next quarter's coaching plan."],practice:"Manager-led debrief: each rep shares one win and one thing they'll do differently. Manager gives SBI feedback.",coaching:"This is not the end of coaching — it's the baseline. The GROW + SBI rhythm continues. The standards stay.",cta:"Share play results with leadership. Schedule ongoing 1:1 cadence. Identify 1–2 reps for advanced coaching track."},rep:{objective:"Reps reflect on growth, share best practices, and commit to sustaining the habits built over 6 weeks.",teach:["Self-reflection: where were you at week 1 vs. now? What's different about how you run a call?","Best practice sharing: what talk tracks or questions generated the most engagement from pros?","Habits to keep: daily prospecting, 5-stage structure on every call, Know Your Business qualifiers, SFDC updated within 24 hrs.","What's next: the play is over but the standards aren't."],practice:"R.A.C.E. debrief: Review learnings. Acknowledge successes. Collaborate on best practices. Execute SMART goals.",drill:"Each rep shares: (1) biggest win, (2) one talk track that worked better than expected, (3) one thing they'll keep doing differently.",cta:"Set 2–3 personal SMART goals for next quarter. Share with manager in next 1:1."}}
+];
+
+var phaseColors = ['#2d7a00','#a06800','#555'];
+var phaseBgs = ['#edf7e6','#fff8ec','#f5f5f5'];
+var phaseNames = ['I Drive','We Drive','You Drive'];
+var currentRole = 'rep';
+var currentWeek = 0;
+
+function buildPills() {
+  var c = document.getElementById('weekPills');
+  c.innerHTML = '';
+  sessions.forEach(function(s,i) {
+    var btn = document.createElement('button');
+    btn.className = 'week-pill' + (i===0?' active':'');
+    btn.style.background = i===0 ? phaseColors[s.phase] : phaseBgs[s.phase];
+    btn.style.color = i===0 ? '#fff' : phaseColors[s.phase];
+    btn.style.borderColor = phaseColors[s.phase];
+    btn.textContent = s.wk===0 ? 'Mgr Only' : 'Wk '+s.wk;
+    btn.onclick = (function(idx){ return function(){ selectWeek(idx); }; })(i);
+    c.appendChild(btn);
+  });
+}
+
+function selectWeek(i) {
+  currentWeek = i;
+  currentRole = sessions[i].rep ? 'rep' : 'mgr';
+  document.querySelectorAll('.week-pill').forEach(function(p,idx){
+    var s = sessions[idx];
+    p.style.background = idx===i ? phaseColors[s.phase] : phaseBgs[s.phase];
+    p.style.color = idx===i ? '#fff' : phaseColors[s.phase];
+  });
+  var toggle = document.getElementById('roleToggle');
+  toggle.style.display = sessions[i].rep ? 'flex' : 'none';
+  document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.role-btn')[currentRole==='rep'?0:1].classList.add('active');
+  renderSession();
+}
+
+function setRole(role, btn) {
+  currentRole = role;
+  document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderSession();
+}
+
+function renderSession() {
+  var s = sessions[currentWeek];
+  var badge = document.getElementById('sessionPhaseBadge');
+  badge.textContent = phaseNames[s.phase];
+  badge.style.background = phaseBgs[s.phase];
+  badge.style.color = phaseColors[s.phase];
+  document.getElementById('sessionWeekLabel').textContent = s.wk===0 ? 'Manager Orientation' : 'Week '+s.wk;
+  document.getElementById('sessionTitle').textContent = s.title;
+  var data = currentRole==='mgr' ? s.mgr : s.rep;
+  if (!data) { document.getElementById('sessionContent').innerHTML = '<p style="font-size:13px;color:#555;padding:8px 0">This session is for managers only.</p>'; return; }
+  var h = '';
+  h += '<div class="obj-banner"><p class="ob-label">Session objective</p><p class="ob-text">'+data.objective+'</p></div>';
+  h += '<p class="label">What to teach</p><ul class="teach-list">';
+  data.teach.forEach(function(t){ h += '<li>'+t+'</li>'; });
+  h += '</ul><div class="bottom-grid"><div class="practice-box"><p class="pb-label">Practice / drill</p><p class="pb-text">'+data.practice+'</p>';
+  if (data.drill) h += '<p class="pb-drill">'+data.drill+'</p>';
+  h += '</div><div class="cta-box"><p class="cb-label">Call to action</p><p class="cb-text">'+data.cta+'</p>';
+  if (currentRole==='mgr' && data.coaching) h += '<div class="coaching-inner"><p class="ci-label">Coaching focus</p><p class="ci-text">'+data.coaching+'</p></div>';
+  h += '</div></div>';
+  document.getElementById('sessionContent').innerHTML = h;
+}
+
+buildPills();
+selectWeek(0);
+</script>
+</body>
+</html>
